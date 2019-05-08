@@ -1,7 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var homework  =  require('./homework/index')
-
-router.use('/homework',homework)
-
+var board  = require("./board")
+router.use('/board',board)
 module.exports = router;
