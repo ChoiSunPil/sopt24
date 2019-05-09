@@ -8,8 +8,10 @@ var fields = ['id','title','contents','time','pw','salt']
 require('moment-timezone')
 moment.tz.setDefault("Asia/Seoul")
 const parser = new Parser()
-const filePath = path.join(__dirname, '../../public/csvs') 
+const filePath = path.join(__dirname, '../../public/csvs')
 const boardPath =  path.join(filePath,'/table.csv')
+const responseMessagePath = path.join(__dirname,"../../module/responseMessage.js")
+const responseMessage = require(responseMessagePath)
 module.exports = {
     
 
@@ -17,6 +19,10 @@ module.exports = {
         return new Promise((resolve,reject)=>{
         
             csvtojson().fromFile(boardPath).then((jsonArray)=>{
+                  
+                if(jsonArray.length <1)
+                reject(responseMessage.SEARCH_TABLE_SUCCESS)
+
                 for(let  i = 0 ; i <jsonArray.length; i++)
                 {
                     if(jsonArray[i].id === id)
@@ -24,7 +30,7 @@ module.exports = {
                              resolve(jsonArray[i])
                          }
                 }
-                reject("게시글과 일치하는 아이디가 없습니다")
+                reject(responseMessage.NO_TABLE)
             })
 
             
@@ -51,7 +57,7 @@ module.exports = {
                 for(let  i = 0 ; i <jsonArray.length; i++)
                 {
                     if(jsonArray[i].id === boardJson.id)
-                         reject("중복되는 아이디가 있습니다")
+                         reject(responseMessage.ALREADY_TABLE)
                 }    
                  jsonArray.push(boardJson)
                  try{     
@@ -61,7 +67,7 @@ module.exports = {
                     }
                     catch(err)
                     {
-                        reject("파일 저장 실패 했습니다")
+                        reject(responseMessage.CREATED_TABLE_FAIL)
                     }
                 }
                 else
@@ -74,7 +80,7 @@ module.exports = {
                  }
                  catch(err)
                  {
-                    reject("파일 저장 실패 했습니다")
+                    reject(responseMessage.CREATED_TABLE_FAIL)
                  }
                 }
             }
@@ -108,10 +114,10 @@ module.exports = {
                                     }
                                     catch(err)
                                     {
-                                        reject("파일 저장 실패 했습니다")
+                                        reject(responseMessage.CREATED_TABLE_FAIL)
                                     }
                             }
-                            reject('비밀번호가 틀렸습니다.')
+                            reject(responseMessage.MISS_MATCH_PW)
 
                 
 
@@ -119,7 +125,7 @@ module.exports = {
 
                          }
                 }
-                reject("게시글과 일치하는 아이디가 없습니다")
+                reject(responseMessage.NO_TABLE)
             })
 
 
@@ -148,10 +154,10 @@ return new Promise((resolve,reject)=>{
                             }
                             catch(err)
                             {
-                                reject("파일 저장 실패 했습니다")
+                                reject(responseMessage.DELETE_TABLE_FAIL)
                             }
                     }
-                    reject('비밀번호가 틀렸습니다.')
+                    reject(responseMessage.MISS_MATCH_PW)
 
         
 
@@ -159,7 +165,7 @@ return new Promise((resolve,reject)=>{
 
                  }
         }
-        reject("게시글과 일치하는 아이디가 없습니다")
+        reject(responseMessage.NO_TABLE)
     })
 
             
